@@ -69,6 +69,7 @@ import org.springframework.dao.support.PersistenceExceptionTranslator;
  * @see MyBatisExceptionTranslator
  * @version $Id$
  */
+//SqlSessionTemplate 代理模式 封装对数据库的操作 全局唯一所有mapper共享
 public class SqlSessionTemplate implements SqlSession {
 
   private final SqlSessionFactory sqlSessionFactory;

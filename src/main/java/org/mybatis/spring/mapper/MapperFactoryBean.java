@@ -50,6 +50,7 @@ import org.springframework.beans.factory.FactoryBean;
  * @see SqlSessionTemplate
  * @version $Id$
  */
+//用于生成mybatis mapper调用的代理对象mapperProxy
 public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements FactoryBean<T> {
 
   private Class<T> mapperInterface;

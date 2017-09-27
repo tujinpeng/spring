@@ -66,6 +66,12 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
  * @see #setDataSource
  * @version $Id$
  */
+/**
+ * <pre>
+ * SqlSessionFactoryBean
+ * 负责创建session工厂和建造全局的配置configuration
+ * </pre>
+ */
 public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
 
   private final Log logger = LogFactory.getLog(getClass());
@@ -349,7 +355,10 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
     Configuration configuration;
 
+    //建造者模式--开始初始化全局的配置Configuration
     XMLConfigBuilder xmlConfigBuilder = null;
+
+    //XML配置建造器开始构建Configuration
     if (this.configLocation != null) {
       xmlConfigBuilder = new XMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
       configuration = xmlConfigBuilder.getConfiguration();
@@ -361,14 +370,17 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
       configuration.setVariables(this.configurationProperties);
     }
 
+    //初始化对象工厂配置
     if (this.objectFactory != null) {
       configuration.setObjectFactory(this.objectFactory);
     }
 
+    //初始化对象包装工厂配置
     if (this.objectWrapperFactory != null) {
       configuration.setObjectWrapperFactory(this.objectWrapperFactory);
     }
 
+    //初始化类型别名注册器
     if (hasLength(this.typeAliasesPackage)) {
       String[] typeAliasPackageArray = tokenizeToStringArray(this.typeAliasesPackage,
           ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
@@ -390,6 +402,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
       }
     }
 
+    //初始化拦截器链配置
     if (!isEmpty(this.plugins)) {
       for (Interceptor plugin : this.plugins) {
         configuration.addInterceptor(plugin);
@@ -399,6 +412,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
       }
     }
 
+    //初始化类型处理器
     if (hasLength(this.typeHandlersPackage)) {
       String[] typeHandlersPackageArray = tokenizeToStringArray(this.typeHandlersPackage,
           ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
@@ -419,6 +433,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
       }
     }
 
+    //XML配置构建器开始构建配置
     if (xmlConfigBuilder != null) {
       try {
         xmlConfigBuilder.parse();
@@ -437,9 +452,12 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
       this.transactionFactory = new SpringManagedTransactionFactory();
     }
 
+    //初始化数据库环境
     Environment environment = new Environment(this.environment, this.transactionFactory, this.dataSource);
     configuration.setEnvironment(environment);
 
+
+    //初始化数据库标识
     if (this.databaseIdProvider != null) {
       try {
         configuration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
@@ -448,6 +466,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
       }
     }
 
+    //初始化Mapper 映射构建器, 开始构建Configuration
     if (!isEmpty(this.mapperLocations)) {
       for (Resource mapperLocation : this.mapperLocations) {
         if (mapperLocation == null) {
@@ -474,6 +493,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
       }
     }
 
+    //构造Configuration全局配置完毕 返回session工厂对象(持有Configuration)
     return this.sqlSessionFactoryBuilder.build(configuration);
   }
 

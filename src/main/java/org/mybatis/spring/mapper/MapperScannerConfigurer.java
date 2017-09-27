@@ -91,6 +91,17 @@ import org.springframework.util.StringUtils;
  * @see ClassPathMapperScanner
  * @version $Id$
  */
+
+/**
+ * <pre>
+ * MapperScannerConfigurer
+ * 职责:
+ *  (1)MapperScannerConfigurer实现BeanDifinitionRegistryPostProcesser接口
+ *  (2)当Spring加载完所有beanDifinition后,创建Scanner扫描器扫描指定包下mapper的class文件,创建用于生成mapper代理的factoryBean(MapperFactoryBean)定义
+ *  (3)后续,这些MapperFactoryBean定义等spring创建bean后调动getBean()方法,最终会生成一个个mapperProxy
+ *
+ * </pre>
+ */
 public class MapperScannerConfigurer implements BeanDefinitionRegistryPostProcessor, InitializingBean, ApplicationContextAware, BeanNameAware {
 
   private String basePackage;
